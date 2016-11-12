@@ -1,4 +1,4 @@
-var apiKey = "E1D303A7F3291E155F246DCF0230B65D";
+var apiKey = "22D1833809148DA4D64A03278FF6EBDE";
 var steamID = "76561197966297270";
 var method = 'GET';
 var query1 = "https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=";
