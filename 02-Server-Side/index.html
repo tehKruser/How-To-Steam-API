@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<html>
+	<head>
+		<meta>
+		<title>Server Side - 2</title>
+		<link rel="stylesheet" href="../css/style-main.css" type="text/css">
+	</head>
+<body>
+	<div id='navbar' class="navbar">
+
+	</div>
+	
+	<div class="back-drop">
+		<div class="header-content">
+			<h1>Server Side Part 2</h1>
+			<h3>JavaScript for the Server Side</h3>
+		</div>
+		<div class="body-content">
+			<p>
+				Previously, we discussed the sections of the URL that we need to send to the Steam Web API from our server. Now let's discuss how
+				to build a string URL on the server side from parameters sent by the client side.
+			</p>
+			
+			<p>
+				As mentioned in <a href='../01-Server-Side'>Part 1</a>, we are securing our key on the server. We also want to fill in the skeleton
+				code for our app.get method. Let's see how that looks:
+			</p>
+			
+			<pre class='codestyle'>
+<span class='comment'>//1</span>
+var apiKey = 'key=<span class='your_insert'>Your_Key_Here'</span>
+
+<span class='comment'>//3</span>
+function processData(req) {
+   var context = {};
+   context.method = req.method; <span class='comment'>//method type saved</span>
+   context.qParams = []; <span class='comment'>//query parameters</span>
+
+   for(var p in req.query) {
+     context.qParams.push({	'name': p,'value': req.query[p]});
+    }
+	
+   return context;
+}
+
+app.get('/', function(req, res){ 
+  <span class='comment'>//2</span>
+  var userInput = processData(req);
+  <span class='comment'>//4</span>
+  var reqString = 'http://api.steampowered.com/';
+  
+  <span class='comment'>//5</span>
+  switch(userInput.qParams[0].value) {
+	  case 'GetFriendList':
+			reqString += 'ISteamUser/GetFriendList/v0001/?';
+			break;
+	  case 'GetPlayerSummaries':
+			reqString += 'ISteamUser/GetPlayerSummaries/v0002/?';
+			break;
+	  case 'GetRecentlyPlayedGames':
+			reqString += 'IPlayerService/GetRecentlyPlayedGames/v0001/?';
+			break;
+	  default:
+			reqString += 'ISteamUser/GetFriendList/v0001/?';
+			break;
+  }
+  
+  <span class='comment'>//6</span>
+  for(var p in userInput.qParams) {
+
+	  if(p != 0){
+		  if(p != 1){
+			  reqString += '&';
+		  }
+		  
+		  if(userInput.qParams[p].name == 'key'){
+			  reqString += apiKey;
+		  } else {
+			  reqString += userInput.qParams[p].name + '=' + userInput.qParams[p].value;
+		  }
+	  }
+
+  }
+  
+  <span class='comment'>//7</span>
+  request(reqString, function (error, response, body) { 
+	 if (!error && response.statusCode === 200) {
+			res.send(body);
+     } else {
+		 res.send('Information not available');
+	 }
+   }); 
+});
+			</pre>
+			
+			<p>
+				Each section indicated with a comment (<span class='comment'>'//X'</span>) is discussed below.
+			</p>
+			
+			<h3><span class='comment'>//1</span> - Set your Steam Web API Key</h3>
+			<p>Set your Steam Web API key.</p>
+			
+			<h3><span class='comment'>//2</span> and <span class='comment'>//3</span>  - Helper function for handling parameters</h3>
+			<p>
+				When the client makes a get request, the processData helper function will organize the parameters sent
+				by the client into an array of objects with 'name' and 'value' parameters. The array of objects, which is named
+				'context', is then returned to 'userInput'.
+			</p>
+			
+			<h3><span class='comment'>//4</span> - Initialize URL string</h3>
+			<p> We initialize our reqString with the base URL of 'http://api.steampowered.com/'. Next, we will add onto the string.</p>
+			
+			<h3><span class='comment'>//5</span> - Append appropriate API method</h3>
+			<p>
+				As discussed in Part 1, the second section of the URL will be the Steam Web API method to 'get', and will be the first 
+				parameter sent by the client. Based on the value, a switch statement will set append the appropriate string to the URL.
+				Based on your project, you can add as many methods as you need. I recommend sticking with the naming convention for methods
+				found in the <a href='https://developer.valvesoftware.com/wiki/Steam_Web_API'>Steam Web API documentation</a>.
+			</p>
+			
+			<h3><span class='comment'>//6</span> - Append remaining parameters</h3>
+			<p>
+				A for loop is used to iterate through the parameter array and add the remaining parameters to the string:
+			</p>
+				
+			<ul>
+				<li>The first parameter is skipped because it was added with the switch statement.</li>
+				<li>If the parameter name is equal to 'key', then add 'apiKey' to the URL.</li>
+				<li>Append '&' as appropriate to separate parameters in the URL.</li>
+			</ul>
+			
+			<h3><span class='comment'>//7</span> - Send data back to client</h3>
+			<p>
+				If there is no error in the response back from the Steam Web API, then send the body of the response to the client. 
+				Else, we send an indicator that the data is not available.
+			</p>
+			
+			<div class='section_break'><div>
+			
+			<p>
+				That is pretty much the basics of what you need for JavaScript on the server side. In the next section, we'll discuss
+				the client side where we will get, work with and display data.
+		
+			<div class='btn_traverse'>
+				<section class='btn_traverse'>
+				
+					<div id='prev' class='centered'>
+						<a href='../01-Server-Side'>
+							<button type='button' class='btn_traverse'>
+								<strong>&#xab; Server Side Part 1</strong>
+							</button>
+						</a>
+					</div>
+					
+					<div id='next' class='centered'>
+						<a href='../03-Client-Side'>
+							<button type='button' class='btn_traverse'>
+								<strong>Client Side &#xbb;</strong>
+							</button>
+						</a>
+					</div>
+					
+				</section>
+			</div>
+		</div>
+	</div>
+	<script src="../js/script-navbar.js"></script>
+</body>
+</html>

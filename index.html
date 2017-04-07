@@ -3,38 +3,68 @@
 	<head>
 		<meta>
 		<title>Intro</title>
-		<link rel="stylesheet" href="style-main.css" type="text/css">
+		<link rel="stylesheet" href="css/style-main.css" type="text/css">
 	</head>
 <body>
-	<div class="navbar">
-		<ul>
-		  <li class="home-link"><a href="index.html">Steam Web API Tutorial</a></li>
-		  <li class="dropdown">
-			<a href="#" class="dropbtn">Navigation</a>
-			<div class="dropdown-content">
-			  <a href="page1.html">Getting Started</a>
-			  <a href="http://api.brewerydb.com/v2/beers?key=4bdce8d1ddc581b34bd5845d9aa70550&abv=+10">Get Data</a>
-			  <a href="final-page.html">Final Result</a>
-			</div>
-		  </li>
-		</ul>
+	<div id='navbar' class="navbar">
+	
 	</div>
 	
 	<div class="back-drop">
 		<div class="header-content">
 			<h1>Welcome!</h1>
 		</div>
-		<img src="mysteam.png" alt="Steam App" style="width:400px;height:700px;">
+		<img class='imgLeftFloat' src="images/mysteam.PNG" alt="Steam App" style="width:35%;">
+		<!--style="width:400px;height:700px;"!-->
 		<div class="body-content">
-			<p>
-				Here is some content. I am going to keep typing until the content seems to overflow into
-				areas it should not overflow into, but we'll see if I can fix that. Here is some content.
-				I am going to keep typing until the content seems to overflow into areas it should not overflow
-				into, but we'll see if I can fix that. Here is some content. I am going to keep typing until
-				the content seems to overflow into areas it should not overflow into, but we'll see if I can
-				fix that.
-			</p>
+				<p>This tutorial was created for those of you who are interested in developing with the Steam Web API,
+				but are unsure of how to get started. We'll walk you through an example of displaying Steam IDs,
+				gamertags and recent games played. You'll see the JavaScript code for both the server and client side,
+				and finally see that code in action.
+
+				<h3> Resources </h3>
+
+				<p>Before we get started, you should review the following resources:</p>
+
+				<ul>
+					<li><p>Host for your project: You'll need a place to host your website, whether it be on your home server, <a href='https://pages.github.com/'>GitHub Pages</a>, or any of the other countless options.</p></li>
+					<li><p><a href='https://developer.valvesoftware.com/wiki/Steam_Web_API'>Steam Web API</a>: Documentation on the list of available methods</p></li>
+					<li><p><a href='https://steamcommunity.com/login/home/?goto=%2Fdev%2Fapikey'>Steam Web API Key</a>: Obtain your API key for your project. The "Domain Name" is the base url of where your project is hosted.</p></li>
+					<li><p><a href='https://nodejs.org/en/'>Node.js</a>: This tutorial will be using Node.js for JavaScript runtime.</p></li>
+					<li><p><a href='https://developer.mozilla.org/en-US/docs/AJAX/Getting_Started'>AJAX</a>: Asynchronous JavaScript and XML. Creates an object to communicate with server side scripts.</p></li>
+					<li><p><a href='https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS'>CORS</a>: (Cross-Origin-Resource-Sharing) The Steam Web API does not allow AJAX requests from browsers due to security 
+						concerns of exposing the API key. This is an important concept to be familiar with, but if you don't completely understand it, do not worry. This tutorial should help you deal with it.</p></li>
+					<li><p><a href='http://52.40.59.238/code.html'>BreweryDB API Tutorial - Preparing a server</a>: This is a great example of how to set up a server for back end requests to the Steam Web API. Follow this 
+						tutorial for how to set up the server, and then I'll show you how to modify the code to accept requests from your browser and then send those requests off to the Steam Web API.</p>
+					</li>
+				</ul>
+					<p>Essentially, our communication will look like the following:</p>
+					<p class='centered'>Browser &#8680; Server &#8680; Steam Web API &#8680; Server &#8680; Browser</p>
+				
+				<p>
+					Next, we'll discuss the server side of things.
+				</p>
+				
+					
+				
+				<div class='btn_traverse'>
+					
+					<section class='btn_traverse'>
+						
+						<div id='center' class='centered'>
+							<a href='01-Server-Side'>
+								<button type='button' class='btn_traverse'>
+									<strong>Server Side &#xbb;</strong>
+								</button>
+							</a>
+						</div>
+				
+					</section>
+				</div>
+				
+				
 		</div>
 	</div>
+	<script src="js/script-navbar.js"></script>
 </body>
 </html>

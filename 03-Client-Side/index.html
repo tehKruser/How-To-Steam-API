@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<html>
+	<head>
+		<meta>
+		<title>Client Side Part 1</title>
+		<link rel="stylesheet" href="../css/style-main.css" type="text/css">
+	</head>
+<body>
+	<div id='navbar' class="navbar">
+
+	</div>
+	
+	<div class="back-drop">
+		<div class="header-content">
+			<h1>Client Side Part 1</h1>
+			<h3>Pre-Coding and Understanding the Data</h3>
+		</div>
+		<div class="body-content">
+			
+			<h2>Pre-coding</h2>
+			
+			<p>
+				Now that we set up our server to handle 'GET' requests, we can work on the JavaScript for the client side.
+				The first step is to visualize and plan for the information you want to work with and/or display. For this tutorial,
+				we want to show information about an account by inputting the account's Steam ID.
+			</p>
+			
+			<ul>
+				<h3>Steam account information to display:</h3>
+				<li>Gamer tag</li>
+				<li>Avatar</li>
+				<li>Status</li>
+				<li> Friend's list, showing the following:
+					<ul>
+						<li>Steam ID</li>
+						<li>Avatar</li>
+						<li>Gamer tag</li>
+						<li>Status</li>
+						<li>Recently played games</li>
+					</ul>
+				</li>
+			</ul>
+			
+			<p>Now that we know what we want, we can organize what type of data belongs with which Steam Web API method.</p>
+			
+			<table class='table_normal'>
+				<caption><strong>Steam Web API Methods and Data</strong></caption>
+				<tr>
+					<td style="background-color:#334259;"><strong>Method:</strong></td>
+					<td style="background-color:#334259;"colspan='3'><a href='https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerSummaries_.28v0002.29'>GetPlayerSummaries</a></td>
+					<td style="background-color:#334259;"><a href='https://developer.valvesoftware.com/wiki/Steam_Web_API#GetFriendList_.28v0001.29'>GetFriendList</a></td>
+					<td style="background-color:#334259;"><a href='https://developer.valvesoftware.com/wiki/Steam_Web_API#GetRecentlyPlayedGames_.28v0001.29'>GetRecentlyPlayedGames</a></td>
+				</tr>
+				<tr>
+					<td><strong>Data:</strong></td>
+					<td>Avatar</td>
+					<td>Gamer Tag</td>
+					<td>Status</td>
+					<td>Steam ID</td>
+					<td>Recent Games</td>
+				</tr>
+			</table>
+			
+			<p>
+				The last thing to do before we code is to write some pseudo-code to help sequence when we'll get the data
+				and display it.
+			</p>
+			
+			<pre class='codestyle'><span class='comment'>
+/****************************Pseudo Code for Our API calls**********************
+ *
+ * Get player summaries data for Steam ID.
+ * 		Display gamer tag, avatar, status
+ *
+ * Get friends list data for steam ID
+ * 		For each Steam ID in friend's list data
+ *			Display Steam ID
+ *
+ *			Get player summaries data for friend Steam ID
+ *				Display gamer tag, avatar, status
+ *				
+ *				Get Recently played games for friend's Steam ID
+ *					Display recently played games
+ ********************************************************************************/</span>
+			</pre>
+			
+			<p>
+				Now, we know what to display, where the information (data) comes from and an approach to coding.
+				The last task to do before we code is to understand the format of the data and how to access the desired
+				pieces.
+			</p>
+			
+			<div class='section_break'><div>
+			
+			<h2>Understanding the Data</h2>
+			
+			<h3>GetPlayerSummaries</h3>
+			
+			<p>
+				As we stated in the pseudo code, the first data set that we will get from our proxy is the player summaries (GetPlayerSummaries from Steam Web API).
+				If we were to log the response from our proxy to the console, we would get the following for Steam ID 76561197966297270:
+			</p>
+			
+			<img src="../images/playerSummariesObject.PNG" alt="Player Summaries Data" style="width:100%;">
+			
+			<div class='text_and_code'>
+				<span>We'll discuss how to request this object later, but for now, let's set this object equal to a variable called response:</span>
+				<pre class='codestyle'>var response = JSON.parse(req.responseText);</pre>
+				<span>The first node in our object is also called "response", so we access it by:</span>
+				<pre class='codestyle'>response.response</pre>
+				<span> Its child node is an array called "players". There is only one element in the array, so we access it by:</span>
+				<pre class='codestyle'>response.response.players[0]</pre>
+			<div>
+			
+			<p>For the gamer tag, avatar and status values, we access them as:</p>
+			<table class='table_normal' style='width:100%'>
+				<tr>
+					<td style="background-color:#334259;width:100px;"><strong>Data</strong></td>
+					<td style="background-color:#334259;text-align:left;"><strong>JavaScript</strong></td>
+				</tr>
+				<tr>
+					<td>Gamer Tag</td>
+					<td style='text-align:left;'><pre class="codestyle">response.response.players[0].personaname</pre></td>
+				</tr>
+				<tr>
+					<td>Avatar (Medium)</td>
+					<td style='text-align:left;'><pre class="codestyle">response.response.players[0].avatarmedium</pre></td>
+				</tr>
+				<tr>
+					<td>Status</td>
+					<td style='text-align:left;'><pre class="codestyle">response.response.players[0].personastate</pre></td>
+				</tr>
+			</table>
+			
+			<h3>GetFriendList</h3>
+			
+			<p>
+				The information above should give you the general idea as to how to access the data from the proxy server. Here is the object for "friends list" and 
+				the JavaScript to access a Steam ID of a friend:
+			</p>
+			
+			<img src="../images/friendsListObject.PNG" alt="Friends List Data" style="width:100%;">
+			
+			<table class='table_normal' style='width:100%'>
+				<tr>
+					<td style="background-color:#334259;width:100px;"><strong>Data</strong></td>
+					<td style="background-color:#334259;text-align:left;"><strong>JavaScript</strong></td>
+				</tr>
+				<tr>
+					<td>Friend Steam_ID</td>
+					<td style='text-align:left;'><pre class="codestyle">response.friendslist.friends[i].steamid</pre>where 0 &le; i < length</td>
+				</tr>
+			</table>
+			
+			<h3>GetRecentlyPlayedGames</h3>
+			
+			<p>
+				The last object we'll work with is for recent games:
+			</p>
+			
+			<img src="../images/recentGamesObject.PNG" alt="Recent Games Data" style="width:100%;">
+			
+			<table class='table_normal' style='width:100%'>
+				<tr>
+					<td style="background-color:#334259;width:100px;"><strong>Data</strong></td>
+					<td style="background-color:#334259;text-align:left;"><strong>JavaScript</strong></td>
+				</tr>
+				<tr>
+					<td>Recent Game Name</td>
+					<td style='text-align:left;'><pre class="codestyle">response.response.games[i].name</pre>where 0 &le; i < total_count</td>
+				</tr>
+			</table>
+			
+			<p>Now that we are equipped with understanding what data we want, when we'll want to access it, and how to access it, we can get to coding!</p>
+			
+			<div class='section_break'><div>
+			
+			<div class='btn_traverse'>
+				<section class='btn_traverse'>
+				
+					<div id='prev' class='centered'>
+						<a href='../02-Server-Side'>
+							<button type='button' class='btn_traverse'>
+								<strong>&#xab; Server Side Part 2</strong>
+							</button>
+						</a>
+					</div>
+					
+					<div id='next' class='centered'>
+						<a href='../04-Client-Side'>
+							<button type='button' class='btn_traverse'>
+								<strong>Client Side Part 2 &#xbb;</strong>
+							</button>
+						</a>
+					</div>
+					
+				</section>
+			</div>
+		</div>
+	</div>
+	<script src="../js/script-navbar.js"></script>
+</body>
+</html>

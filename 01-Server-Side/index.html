@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<html>
+	<head>
+		<meta>
+		<title>Server Side - 1</title>
+		<link rel="stylesheet" href="../css/style-main.css" type="text/css">
+	</head>
+<body>
+	<div id='navbar' class="navbar">
+
+	</div>
+	
+	<div class="back-drop">
+		<div class="header-content">
+			<h1>Server Side Part 1</h1>
+			<h3>Preparing the server and breaking down the URL for the Steam Web API request</h3>
+		</div>
+		<div class="body-content">
+			
+			<h2>Preparing the server</h2>
+			
+			<p>
+				Now, you should construct your server side JavaScript file similar to the example in the
+				<a href='http://52.40.59.238/code.html'>BreweryDB API Tutorial</a>. At a minimum, it should
+				have the following:
+			</p>
+			
+			<pre class='codestyle'>
+var express = require('express');
+var request = require('request');
+var app = express();
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.json());
+app.set('port', 8228);
+
+app.use(function (req, res, next) {
+  <span class='comment'>// Website sending requests</span>
+  res.setHeader('Access-Control-Allow-Origin', 'http://web.engr.oregonstate.edu');
+  <span class='comment'>// Request method that you are allowing (we are using GET)</span>
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  <span class='comment'>// Request header types that are allowed</span>
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  <span class='comment'>// The following is set to false since we won't be addressing cookies and sessions</span>
+  res.setHeader('Access-Control-Allow-Credentials', false);
+  <span class='comment'>// Proceed to the next layer of middleware</span>
+  next();
+});
+
+app.get('/', function(req, res){ 
+  reqString ='';
+  request(reqString, function (error, response, body) { 
+	 if (!error && response.statusCode === 200) {
+		res.send(body);
+	 }
+   }); 
+});
+
+
+app.listen(app.get('port'), function(){
+  console.log('Express started on http://flip3.engr.oregonstate.edu:' + app.get('port') + '; press Ctrl-C to terminate.');
+});
+			</pre>
+			
+			<p>
+				All the details of this code are already discussed in adequate detail from the Brewery API Tutorial, so I will
+				not explain any of it here, other than the couple of differences in my code above. 			
+			</p>
+			
+			<ol>
+				<li>
+					My server is hosted on port 8228. You can choose whatever valid port you like.
+				</li>
+				<li>
+					The 'Access-Allow-Control-Origin' parameter value in app.use is set to Oregon State University's base 
+					URL for students to host content. You'll want to replace this value with the base url of your project.
+				</li>
+				<li>
+					The app.get function has been gutted. We'll discuss how to fill this later.
+				</li>
+			</ol>
+			
+			<p>That said, this server side JavaScript code should resolve any potential CORS issues, as mentioned on the home page.</p> 
+			
+			<div class='section_break'><div>
+			<h2>Breaking down the URL for the Steam Web API request</h2>
+			
+			<p>
+				Before we jump into the code that will create a request to the Steam Web API, we need to understand the structure of the request URL 
+				and what that means for the request parameters that the client will need to send to our server.
+			</p>
+			
+			<p>
+				Here are the 3 different types of URL requests that will be used for this API tutorial:
+			</p>
+			
+			<ol>
+				<li><a href='https://developer.valvesoftware.com/wiki/Steam_Web_API#GetFriendList_.28v0001.29'>GetFriendList</a>
+					<ul>
+						<li class='sFont_link'>Ex: http://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=Your_Key_Here&steamid=76561197966297270&relationship=friend</li>
+					</ul>
+				</li>
+				
+				<li><a href='https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerSummaries_.28v0002.29'>GetPlayerSummaries</a>
+					<ul>
+						<li class='sFont_link'>Ex: http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=Your_Key_Here&steamids=76561197960435530</li>
+					</ul>
+				</li>
+				
+				<li><a href='https://developer.valvesoftware.com/wiki/Steam_Web_API#GetRecentlyPlayedGames_.28v0001.29'>GetRecentlyPlayedGames</a>
+					<ul>
+						<li class='sFont_link'>Ex: http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=Your_Key_Here&steamid=76561197966297270&format=json</li>
+					</ul>
+				</li>
+			</ol>
+			
+			<p>
+				Now, let's break these down into string sections that can be used to build a URL:
+			</p>
+			
+			<h3>Section 1: Base URL</h3>
+			<p>
+				All 3 methods have a base URL of: "http://api.steampowered.com/". Our server can use this as a starting URL string.
+			</p>
+			
+			<h3>Section 2: Method to call</h3>
+			<p>
+				The next part of the URL is which method we want to call.
+			</p>
+				<table class='table_normal'>
+					<tr>
+						<td>GetFriendList:</td>
+						<td>"ISteamUser/GetFriendList/v0001/?"</td>
+					</tr>
+					<tr>
+						<td>GetPlayerSummaries:</td>
+						<td>"ISteamUser/GetPlayerSummaries/v0002/?"</td>
+					</tr>
+					<tr>
+						<td>GetRecentlyPlayedGames:</td>
+						<td>"IPlayerService/GetRecentlyPlayedGames/v0001/?"</td>
+					</tr>
+				</table>
+			<p>
+				There are many ways that we could get this data from the client side. The approach that this tutorial will take 
+				is to take the name of the method as a parameter and interpret the string to be added to the URL. For example, 
+				if the server receives a parameter called "method" that has a value of "GetFriendList", then the server will append 
+				"ISteamUser/GetFriendList/v0001/?" to the URL.
+			</p>
+			
+			<h3>Section 3: Parameters</h3>
+			<p>
+				Everything after the "?" is the start of the query and has the structure of "parameter_name=paramater_value". If the client 
+				side sends the correct order of parameters, then building the rest of the URL is as simple as appending "parameter_name=parameter_value"
+				for each parameter sent. 
+			</p>
+			
+			<p>
+				One item to note is that the "key" parameter will be a secured value on the server side, so the client can just send a 
+				dummy parameter to indicate when to append the "key" parameter. For the 3 methods we chose, the "key" parameter happens to
+				be the start of the query, but there are other methods you may want to use in which that will not be the case.
+			</p>
+			
+			<div class='section_break'><div>
+			
+			<p>
+				Next, we'll put all of this together in JavaScript so that we can send an AJAX request to the Steam Web API.
+			</p>
+			
+				
+			
+			<!--var apiKey = 'key=<span class='your_insert'>Your_Key_Here</span>';!-->
+		</div>
+		
+		<div class='btn_traverse'>
+			<section class='btn_traverse'>
+			
+				<div id='prev' class='centered'>
+					<a href='../'>
+						<button type='button' class='btn_traverse'>
+							<strong>&#xab; Home</strong>
+						</button>
+					</a>
+				</div>
+				
+				<div id='next' class='centered'>
+					<a href='../02-Server-Side'>
+						<button type='button' class='btn_traverse'>
+							<strong>Server Side Part 2 &#xbb;</strong>
+						</button>
+					</a>
+				</div>
+				
+			</section>
+		</div>
+	</div>
+	<script src="../js/script-navbar.js"></script>
+</body>
+</html>

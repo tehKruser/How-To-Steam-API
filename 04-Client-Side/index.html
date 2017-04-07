@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<html>
+	<head>
+		<meta>
+		<title>Client Side Part 2</title>
+		<link rel="stylesheet" href="../css/style-main.css" type="text/css">
+	</head>
+<body>
+	<div id='navbar' class="navbar">
+
+	</div>
+	
+	<div class="back-drop">
+		<div class="header-content">
+			<h1>Client Side Part 2</h1>
+			<h3>JavaScript for the Client Side</h3>
+		</div>
+		<div class="body-content">
+			
+			<h3>Skeleton Code for a Get Request From Server</h3>
+			
+			<p>
+				It's time to make that JavaScript file as a source for your web page and use AJAX to make a request to your server. 
+				Below is the the basic structure of making such a request.
+			</p>
+			
+			<pre class='codestyle'>
+var req = new XMLHttpRequest();
+req.open('GET', 'URL', true);
+req.addEventListener('load', function() {
+	if(req.status >= 200 && req.status < 400) {
+		var response = JSON.parse(req.responseText);
+		console.log(response);
+		}		
+	} else {
+		console.log("Error in network request: " + req.statusText);
+	}
+});
+req.send(null);
+}</pre>
+			<p>
+				The first line initializes a <a href='https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest'>XMLHttpRequest</a> object
+				called 'req' that will be used to communicate with your server.
+			</p>
+			
+			<pre class='codestyle'>var req = new XMLHttpRequest();</pre>
+			
+			<p>
+				The second line calls the 'open' method on our XMLHttpRequest object. The arguments are:
+			</p>
+			
+			<pre class='codestyle'>req.open('GET', 'URL', true);</pre>
+			
+			<p>
+				The arguments are:
+			</p>
+			
+			<ul>
+				<li>'GET' / 'POST': a string for the request method that is sent to the server. Our server is set up for a 'GET' request.</li>
+				<li>'URL' : a string for the URL to our server. We'll discuss this in detail shortly.</li>
+				<li>true/false : boolean value for asynchronous (true) or synchronous (false) request. We will use 'true' so that our page does not have to wait on data to arrive.</li>
+			</ul>
+			
+			<p>
+				<strong>URL String:</strong> The base of the string is the URL of your server. For example, the URL for my server is:
+			</p>
+			
+			<pre class='codestyle'>var URL = 'http://flip3.engr.oregonstate.edu:8228?';</pre>
+			
+			<p>
+				The only thing missing is the query. Recall that we set up the server to accept 1) the Steam Web API method and 2) the corresponding parameters needed
+				for that method. As an example, our URL for the 'GetPlayerSummaries' Steam Web API method could be constructed as follows:
+			</p>
+			
+			<pre class='codestyle'><span class='comment'>/*
+ * For reference, Steam Web API URL is:
+ *
+ * http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=Your_Key_Here&steamids=76561197966297270
+ * 
+ * Notes: 1. Build URL for server with parameters in the same order as they are seen for the Steam Web API URL.
+ *        2. 'key' parameter value is stored on server. Pass dummy value to indicate order of parameters.
+ *        3. 'method=GetPlayerSummaries' is interpreted as 'ISteamUser/GetPlayerSummaries/v0002/' on the server side.
+ */</span>
+var URL = 'http://flip3.engr.oregonstate.edu:8228?';
+var method = 'method=GetPlayerSummaries';
+var steamid = '76561197966297270';
+var params = '&key=x&steamids=' + steamid;
+var URL += method + params;</pre>
+
+			<p>
+				Continuing on with our skeleton code, we add an 'event listener' to our XMLHttpRequest object.
+			</p>
+			
+			<pre class='codestyle'>req.addEventListener('load', function() {...});</pre>
+			
+			<p>We use</p>
+			
+			<pre class='codestyle'>req.send(null);</pre>
+			
+			<p>
+				to submit our request. When the data comes back to the client, it is a 'load' event. This causes the 'function'
+				argument for the 'addEventListener' to execute. This is the advantage of the asynchronous aspect of the XMLHttpRequest object.
+				Otherwise with synchronous, our page could be held up waiting for the data to load.
+			</p>
+			
+			<p>When the data loads for 'req' (the XMLHttpRequest object), we can work with the data:</p>
+			
+<pre class='codestyle'>function() {
+	if(req.status >= 200 && req.status < 400) {
+		var response = JSON.parse(req.responseText);
+		console.log(response);
+		}		
+	} else {
+		console.log("Error in network request: " + req.statusText);
+	}
+}</pre>
+			<p>
+				Notice that we first check if the 'status' value of 'req' is within an acceptable range. If so,
+				set the variable 'response' equal to the JSON format of the string from 'req.responseText'. This allows
+				us to more easily work with an object.
+			</p>
+			
+			<p>
+				This is the basics of how to make a request and convert the data so that it is usable. One recommendation
+				is to make each request its own function that can be called within your main script. You'll see in the 
+				API Implementation page how a text field and a button with an event listener is used to execute a series of
+				AJAX requests from functions.
+			</p>
+			
+			<p>
+				These functions can be placed into for loops. For example, after a friends list object is received, a for loop
+				can be used to iterate through each Steam ID and call another AJAX request for GetPlayerSummaries properties of that
+				Steam ID.
+			</p>
+			
+			<p>
+				For reference, I've listed example URLs below for each of the AJAX requests needed.
+			</p>
+			
+			<h3>GetPlayerSummaries URL</h3>
+			
+			<pre class='codestyle'>var URL = 'http://flip3.engr.oregonstate.edu:8228?method=GetPlayerSummaries&key=x&steamids=76561197966297270';</pre>
+			
+			<h3>GetFriendList URL</h3>
+			
+			<pre class='codestyle'>var URL = http://flip3.engr.oregonstate.edu:8228?method=GetFriendList&key=x&steamID=76561197966297270&relationship=friend'</pre>
+			
+			<h3>GetRecentlyPlayedGames URL</h3>
+			
+			<pre class='codestyle'>var URL = 'http://flip3.engr.oregonstate.edu:8228?method=GetRecentlyPlayedGames&key=x&steamid=76561197966297270&relationship&format=json';</pre>
+			
+			<div class='section_break'><div>
+			
+			<p>The next page is a demonstration of pulling it all together to display the information that was discussed in Client Side Part 1: Pre-Coding.</p>
+			
+			<div class='btn_traverse'>
+				<section class='btn_traverse'>
+				
+					<div id='prev' class='centered'>
+						<a href='../03-Client-Side'>
+							<button type='button' class='btn_traverse'>
+								<strong>&#xab; Client Side Part 1</strong>
+							</button>
+						</a>
+					</div>
+					
+					<div id='next' class='centered'>
+						<a href='../05-API-Implementation'>
+							<button type='button' class='btn_traverse'>
+								<strong>API Implementation &#xbb;</strong>
+							</button>
+						</a>
+					</div>
+					
+				</section>
+			</div>
+		</div>
+	</div>
+	<script src="../js/script-navbar.js"></script>
+</body>
+</html>
